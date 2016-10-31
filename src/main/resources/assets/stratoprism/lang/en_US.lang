@@ -1,0 +1,22 @@
+itemGroup.stratoprism=§6Stratoprism
+
+//Items
+item.prismfragment_0.name=Red Prism Fragment
+item.prismfragment_1.name=Vermilion Prism Fragment
+item.prismfragment_2.name=Orange Prism Fragment
+item.prismfragment_3.name=Amber Prism Fragment
+item.prismfragment_4.name=Yellow Prism Fragment
+item.prismfragment_5.name=Chartreuse Prism Fragment
+item.prismfragment_6.name=Green Prism Fragment
+item.prismfragment_7.name=Teal Prism Fragment
+item.prismfragment_8.name=Blue Prism Fragment
+item.prismfragment_9.name=Violet Prism Fragment
+item.prismfragment_10.name=Purple Prism Fragment
+item.prismfragment_11.name=Magenta Prism Fragment
+
+item.brokenprism.name=Broken Prism
+
+item.prism.name=Prism
+
+//Blocks
+tile.crystalaltar.name=Crystal Altar

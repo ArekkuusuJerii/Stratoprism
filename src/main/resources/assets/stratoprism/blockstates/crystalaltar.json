@@ -1,0 +1,8 @@
+{
+  "variants": {
+    "facing=north": { "model": "stratoprism:crystalaltar" },
+    "facing=south": { "model": "stratoprism:crystalaltar", "y": 180 },
+    "facing=east":  { "model": "stratoprism:crystalaltar", "y": 90 },
+    "facing=west":  { "model": "stratoprism:crystalaltar", "y": 270 }
+  }
+}
