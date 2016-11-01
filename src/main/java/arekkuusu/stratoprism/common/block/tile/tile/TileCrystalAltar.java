@@ -1,11 +1,12 @@
 package arekkuusu.stratoprism.common.block.tile.tile;
 
 import arekkuusu.stratoprism.api.StratoprismAPI;
-import arekkuusu.stratoprism.api.item.IItemIlluminatum;
+import arekkuusu.stratoprism.api.item.IPrismaticable;
 import arekkuusu.stratoprism.api.recipe.IRecipePrism;
-import arekkuusu.stratoprism.common.handler.PacketDispatcher;
+import arekkuusu.stratoprism.common.proxy.PacketDispatcher;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Items;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -39,24 +40,25 @@ public class TileCrystalAltar extends TileItemInventory implements ITickable {
 			return false;
 
 		boolean added = false;
-		if (!worldObj.isRemote) {
-			for (int i = 0; i < getSizeInventory(); i++)
-				if (itemHandler.getItemSimulate(i) == null) {
-					stack.stackSize--;
-					if (stack.stackSize == 0)
-						entityItem.setDead();
+		if (stack.getItem() instanceof IPrismaticable && ((IPrismaticable) stack.getItem()).canFit(stack))
+			if (!worldObj.isRemote) {
+				for (int i = 0; i < getSizeInventory(); i++)
+					if (itemHandler.getItemSimulate(i) == null) {
+						stack.stackSize--;
+						if (stack.stackSize == 0)
+							entityItem.setDead();
 
-					ItemStack stackToAdd = stack.copy();
-					stackToAdd.stackSize = 1;
-					itemHandler.insertItem(i, stackToAdd, false);
-					added = true;
+						ItemStack stackToAdd = stack.copy();
+						stackToAdd.stackSize = 1;
+						itemHandler.insertItem(i, stackToAdd, false);
+						added = true;
 
-					worldObj.playSound(null, pos, SoundEvents.ENTITY_GENERIC_SPLASH, SoundCategory.BLOCKS, 0.1F, 8F);
+						worldObj.playSound(null, pos, SoundEvents.ENTITY_GENERIC_SPLASH, SoundCategory.BLOCKS, 0.1F, 8F);
 
-					PacketDispatcher.sendTileUpdateNearbyPlayers(this);
-					break;
-				}
-		}
+						PacketDispatcher.sendTileUpdateNearbyPlayers(this);
+						break;
+					}
+			}
 
 		return added;
 	}
@@ -72,21 +74,12 @@ public class TileCrystalAltar extends TileItemInventory implements ITickable {
 
 	@Override
 	public boolean addItem(@Nullable EntityPlayer player, ItemStack stack) {
-		if (hasWater() && stack.getItem() instanceof IItemIlluminatum
-				&& ((IItemIlluminatum) stack.getItem()).canIrradiate()) {
-
-			if (((IItemIlluminatum) stack.getItem()).getIlluminatum(stack) < 2) return false;
-
-			if (player != null && !player.capabilities.isCreativeMode)
-				if (!player.getCooldownTracker().hasCooldown(stack.getItem()))
-					player.getCooldownTracker().setCooldown(stack.getItem(), 10);
-				else return false;
-
-			((IItemIlluminatum) stack.getItem()).addIlluminatum(stack, -2);
-
-			fancyCrafting();
-
-			return checkRecipe();
+		if (stack.getItem() == Items.GLOWSTONE_DUST) {
+			if (player != null && !player.capabilities.isCreativeMode) {
+				stack.stackSize--;
+				if (stack.stackSize == 0) stack = null;
+			}
+			checkRecipe();
 		} else if (!hasWater() && stack.hasCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, null)) {
 			IFluidHandler fluidHandler = stack.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, null);
 
@@ -94,7 +87,7 @@ public class TileCrystalAltar extends TileItemInventory implements ITickable {
 
 			if (drainWater != null && drainWater.getFluid() == FluidRegistry.WATER
 					&& drainWater.amount == Fluid.BUCKET_VOLUME) {
-				if(player != null)
+				if (player != null)
 					worldObj.playSound(player, player.getPosition(), SoundEvents.ITEM_BUCKET_EMPTY, SoundCategory.PLAYERS, 1.0F, 5F);
 
 				fluidHandler.drain(new FluidStack(FluidRegistry.WATER, Fluid.BUCKET_VOLUME), true);
@@ -107,6 +100,7 @@ public class TileCrystalAltar extends TileItemInventory implements ITickable {
 		return false;
 	}
 
+	@Override
 	public boolean removeItem(@Nullable EntityPlayer player) {
 		boolean removed = false;
 		for (int i = getSizeInventory() - 1; i >= 0; i--)
@@ -125,6 +119,18 @@ public class TileCrystalAltar extends TileItemInventory implements ITickable {
 			}
 
 		return removed;
+	}
+
+	@Override
+	public void destroy() {
+		if (!worldObj.isRemote)
+			for (int i = 0; i < getSizeInventory(); i++) {
+				ItemStack output = itemHandler.extractItem(i, 1, false);
+				if (output != null) {
+					EntityItem outputItem = new EntityItem(worldObj, pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, output);
+					worldObj.spawnEntityInWorld(outputItem);
+				}
+			}
 	}
 
 	private boolean checkRecipe() {
@@ -150,7 +156,7 @@ public class TileCrystalAltar extends TileItemInventory implements ITickable {
 		return false;
 	}
 
-	private void fancyCrafting(){
+	private void fancyCrafting() {
 		//TODO: Add FX
 	}
 
@@ -192,21 +198,32 @@ public class TileCrystalAltar extends TileItemInventory implements ITickable {
 
 	@Override
 	public void update() {
-		List<EntityItem> entityItemList = worldObj.getEntitiesWithinAABB(EntityItem.class, new AxisAlignedBB(getPos()).expand(0, 0.5, 0));
+		List<EntityItem> entityItemList = worldObj.getEntitiesWithinAABB(EntityItem.class, new AxisAlignedBB(getPos()).expand(0, -0.4, 0));
 		if (!entityItemList.isEmpty()) {
 			entityItemList.forEach(this::collideItem);
 		}
 		if (!isEmpty() && worldObj.isRemote) {
 			BlockPos pos = getPos();
 			Random rand = new Random();
-			for (int i = 0; i < 1; i++) {
-				float d3 = ((float) pos.getX() + rand.nextFloat());
-				float d4 = ((float) pos.getY() + rand.nextFloat());
-				float d5 = ((float) pos.getZ() + rand.nextFloat());
-				worldObj.spawnParticle(EnumParticleTypes.WATER_BUBBLE, d3, d4, d5, 0.0D, 0.0D, 0.0D);
-				worldObj.spawnParticle(EnumParticleTypes.CRIT_MAGIC, d3, d4, d5, 0.0D, 0.0D, 0.0D);
-			}
-			//TODO: Add Sound
+			float d3 = ((float) pos.getX() + rand.nextFloat());
+			float d4 = ((float) pos.getY() + rand.nextFloat());
+			float d5 = ((float) pos.getZ() + rand.nextFloat());
+			worldObj.spawnParticle(EnumParticleTypes.WATER_BUBBLE, d3, d4, d5, 0.0D, 0.0D, 0.0D);
+			worldObj.spawnParticle(EnumParticleTypes.CRIT_MAGIC, d3, d4, d5, 0.0D, 0.0D, 0.0D);
+			if (tickCount % 10 == 0)
+				worldObj.playSound(null, getPos(), SoundEvents.BLOCK_LAVA_POP, SoundCategory.PLAYERS, 1.0F, 5F);
+		}
+		if (!hasWater() && worldObj.isRainingAt(getPos().up())) {
+			Random rand = new Random();
+			if (worldObj.isRemote)
+				for (int i = 0; i < 4; i++) {
+					float d3 = ((float) pos.getX() + rand.nextFloat());
+					float d4 = ((float) pos.getY() + rand.nextFloat());
+					float d5 = ((float) pos.getZ() + rand.nextFloat());
+					worldObj.spawnParticle(EnumParticleTypes.WATER_BUBBLE, d3, d4, d5, 0.0D, 0.0D, 0.0D);
+				}
+			worldObj.playSound(null, getPos(), SoundEvents.ITEM_BUCKET_FILL, SoundCategory.PLAYERS, 1.0F, 5F);
+			setWater(true);
 		}
 		++tickCount;
 	}

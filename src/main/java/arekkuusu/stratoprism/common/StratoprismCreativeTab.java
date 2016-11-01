@@ -52,7 +52,9 @@ public class StratoprismCreativeTab extends CreativeTabs {
 		this.list = list;
 		addBlock(ModBlocks.CRYSTAL_ALTAR);
 
-		addItem(ModItems.PRISM_FRAGMENT);
+		addItem(ModItems.PRISM_SHARD);
+		addItem(ModItems.PRISM);
+		addItem(ModItems.BROKEN_PRISM);
 	}
 
 	@SideOnly(Side.CLIENT)

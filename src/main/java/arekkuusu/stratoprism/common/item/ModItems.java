@@ -11,8 +11,8 @@ public final class ModItems {
 	@ObjectHolder(LibNameItem.PRISM)
 	public static final Item PRISM = new Item();
 
-	@ObjectHolder(LibNameItem.PRISM_FRAGMENT)
-	public static final Item PRISM_FRAGMENT = new Item();
+	@ObjectHolder(LibNameItem.PRISM_SHARD)
+	public static final Item PRISM_SHARD = new Item();
 
 	@ObjectHolder(LibNameItem.BROKEN_PRISM)
 	public static final Item BROKEN_PRISM = new Item();

@@ -1,22 +1,30 @@
 itemGroup.stratoprism=§6Stratoprism
 
 //Items
-item.prismfragment_0.name=Red Prism Fragment
-item.prismfragment_1.name=Vermilion Prism Fragment
-item.prismfragment_2.name=Orange Prism Fragment
-item.prismfragment_3.name=Amber Prism Fragment
-item.prismfragment_4.name=Yellow Prism Fragment
-item.prismfragment_5.name=Chartreuse Prism Fragment
-item.prismfragment_6.name=Green Prism Fragment
-item.prismfragment_7.name=Teal Prism Fragment
-item.prismfragment_8.name=Blue Prism Fragment
-item.prismfragment_9.name=Violet Prism Fragment
-item.prismfragment_10.name=Purple Prism Fragment
-item.prismfragment_11.name=Magenta Prism Fragment
+item.prismshard_0.name=Red Shard
+item.prismshard_1.name=Vermilion Shard
+item.prismshard_2.name=Orange Shard
+item.prismshard_3.name=Amber Shard
+item.prismshard_4.name=Yellow Shard
+item.prismshard_5.name=Chartreuse Shard
+item.prismshard_6.name=Green Shard
+item.prismshard_7.name=Teal Shard
+item.prismshard_8.name=Blue Shard
+item.prismshard_9.name=Violet Shard
+item.prismshard_10.name=Purple Shard
+item.prismshard_11.name=Magenta Shard
 
 item.brokenprism.name=Broken Prism
 
-item.prism.name=Prism
+item.prism.name=Mythical Vastatio Prism
 
 //Blocks
 tile.crystalaltar.name=Crystal Altar
+
+//Tooltips
+stratoprism.tooltip.prism_shard.header.name=Shard from a shiny crystal
+
+stratoprism.tooltip.prism.header.name=Vastatio container
+stratoprism.tooltip.prism.use.name=Use:
+stratoprism.tooltip.prism.how_to_use.name=Right click to release energy
+stratoprism.tooltip.prism.uses_remaining.name=Uses remaining:

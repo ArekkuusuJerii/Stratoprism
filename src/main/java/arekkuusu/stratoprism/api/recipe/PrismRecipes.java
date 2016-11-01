@@ -8,10 +8,10 @@ import net.minecraft.item.ItemStack;
 
 public final class PrismRecipes {
 
-	public static IRecipePrism CRYSTAL_SHARD;
+	public static IRecipePrism SLIME_BALL;
 
 	public static void init() {
 
-		CRYSTAL_SHARD = StratoprismAPI.registerRecipeCrystalAltar(new ItemStack(Items.SLIME_BALL), Blocks.VINE,  Blocks.VINE, Items.CLAY_BALL);
+		SLIME_BALL = StratoprismAPI.registerRecipeCrystalAltar(new ItemStack(Items.FLINT), new ItemStack(ModItems.PRISM_SHARD, 1, 0), new ItemStack(ModItems.PRISM_SHARD, 1, 1), new ItemStack(ModItems.PRISM_SHARD, 1, 2));
 	}
 }

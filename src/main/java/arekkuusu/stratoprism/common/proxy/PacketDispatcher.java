@@ -1,4 +1,4 @@
-package arekkuusu.stratoprism.common.handler;
+package arekkuusu.stratoprism.common.proxy;
 
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.tileentity.TileEntity;

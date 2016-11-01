@@ -7,4 +7,5 @@ public interface ITileItemHolder {
 	boolean isEmpty();
 	boolean addItem(EntityPlayer player, ItemStack stack);
 	boolean removeItem(EntityPlayer player);
+	void destroy();
 }

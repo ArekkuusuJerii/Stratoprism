@@ -1,6 +1,6 @@
 {
     "parent": "item/generated",
     "textures": {
-        "layer0": "stratoprism:items/PrismFragmentBlue"
+        "layer0": "stratoprism:items/PrismShardYellow"
     }
 }
