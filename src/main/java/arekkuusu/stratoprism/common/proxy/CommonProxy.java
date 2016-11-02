@@ -30,7 +30,6 @@ import java.util.concurrent.Callable;
 @Mod.EventBusSubscriber
 public class CommonProxy {
 
-	PacketDispatcher netDispatcher = new PacketDispatcher();
 	public static SimpleNetworkWrapper network;
 
 	@SubscribeEvent

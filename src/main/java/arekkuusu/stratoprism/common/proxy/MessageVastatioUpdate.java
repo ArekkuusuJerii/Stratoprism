@@ -34,8 +34,8 @@ public class MessageVastatioUpdate implements IMessage {
 	public static class CapsMessageHandler implements IMessageHandler<MessageVastatioUpdate, IMessage> {
 
 		@Override
-		public IMessage onMessage(final MessageVastatioUpdate message, final MessageContext ctx) { //FIXME: I don't think this is right
-			IThreadListener mainThread = (ctx.side.isClient())? Minecraft.getMinecraft() : (WorldServer) ctx.getServerHandler().playerEntity.worldObj;
+		public IMessage onMessage(final MessageVastatioUpdate message, final MessageContext context) { //FIXME: I don't think this is right
+			IThreadListener mainThread = context.side.isClient()? Minecraft.getMinecraft() : (WorldServer)context.getServerHandler().playerEntity.worldObj;
 			mainThread.addScheduledTask(() -> VastatioProvider.get(Minecraft.getMinecraft().thePlayer.inventory.getCurrentItem()).loadNBTData(message.tagCompound));
 			return null;
 		}

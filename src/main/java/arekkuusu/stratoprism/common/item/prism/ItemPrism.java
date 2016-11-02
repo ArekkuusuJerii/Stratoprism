@@ -72,8 +72,9 @@ public class ItemPrism extends ItemMod {
 				for (int i = 0; i < inventory.getSlots(); i++)
 					if (inventory.getStackInSlot(i) == stack) {
 						inventory.extractItem(i, 1, false);
+						//FIXME: This triggers a null pointer exception in MessageVastatioUpdate$CapsMessageHandler
 						worldIn.playSound(player, entityIn.getPosition(), SoundEvents.BLOCK_GLASS_BREAK, SoundCategory.PLAYERS, 1.0F, 10F);
-						//inventory.insertItem(i, new ItemStack(ModItems.BROKEN_PRISM), false);
+						inventory.insertItem(i, new ItemStack(ModItems.BROKEN_PRISM), false);
 					}
 			}
 		}

@@ -1,5 +1,15 @@
+/**
+ * This class was created by <ArekkuusuJerii>. It's distributed as
+ * part of Stratoprism. Get the Source Code in github:
+ * https://github.com/ArekkuusuJerii/Stratoprism
+ *
+ * Stratoprism is Open Source and distributed under the
+ * MIT Licence: https://github.com/ArekkuusuJerii/Stratoprism/blob/master/LICENSE
+ */
 package arekkuusu.stratoprism.client.render.tile;
 
+import arekkuusu.stratoprism.client.model.ModelCrystal;
+import arekkuusu.stratoprism.client.proxy.ResourceLocations;
 import arekkuusu.stratoprism.common.block.tile.tile.TileCrystalAltar;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
@@ -18,9 +28,9 @@ import org.lwjgl.opengl.GL11;
 import java.util.ArrayList;
 import java.util.List;
 
-import static net.minecraft.util.DamageSource.lava;
-
 public class TileRenderCrystalAltar extends TileEntitySpecialRenderer<TileCrystalAltar> {
+
+	private static final ModelCrystal MODEL_CRYSTAL = new ModelCrystal();
 
 	@Override
 	public void renderTileEntityAt(TileCrystalAltar te, double x, double y, double z, float partialTicks, int destroyStage) {
@@ -28,17 +38,18 @@ public class TileRenderCrystalAltar extends TileEntitySpecialRenderer<TileCrysta
 		GlStateManager.enableRescaleNormal();
 		GlStateManager.translate(x + 0.5F, y + 0.78, z + 0.5);
 
+		renderCrystal(te);
+
 		if (te.hasWater()) {
 			float v = 0.150F;
 
-			int items = 0;
 			List<ItemStack> stackList = new ArrayList<>();
 			for (int i = 0; i < te.getSizeInventory(); i++)
 				if (te.itemHandler.getItemSimulate(i) != null) {
 					stackList.add(te.itemHandler.getItemSimulate(i));
-					items++;
 				} else break;
 
+			int items = stackList.size();
 			if (items > 0) {
 				final float modifier = 6F;
 				final float rotationModifier = 0.25F;
@@ -73,8 +84,6 @@ public class TileRenderCrystalAltar extends TileEntitySpecialRenderer<TileCrysta
 					GlStateManager.translate(-v, -v, -v);
 					v *= 2F;
 
-					GlStateManager.color(1F, 1F, 1F, 1F);
-
 					ItemStack item = stackList.get(i);
 
 					Minecraft.getMinecraft().renderEngine.bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
@@ -92,13 +101,12 @@ public class TileRenderCrystalAltar extends TileEntitySpecialRenderer<TileCrysta
 			GlStateManager.disableAlpha();
 
 			float w = -0.425F;
-			//GlStateManager.color(1F, 1F, 1F, 0.7F);
 			GlStateManager.translate(w, -0.3F, w);
 			GlStateManager.rotate(90F, 1F, 0F, 0F);
 			float s = 0.0390625F;
 			GlStateManager.scale(s, s, s);
 
-			renderIcon(fluid.getStill());
+			renderWater(fluid.getStill());
 
 			GlStateManager.enableAlpha();
 			GlStateManager.disableBlend();
@@ -106,7 +114,7 @@ public class TileRenderCrystalAltar extends TileEntitySpecialRenderer<TileCrysta
 		GlStateManager.popMatrix();
 	}
 
-	public void renderIcon(ResourceLocation loc) {
+	public void renderWater(ResourceLocation loc) {
 		TextureAtlasSprite par3Icon = Minecraft.getMinecraft().getTextureMapBlocks().getAtlasSprite(loc.toString());
 		Tessellator tessellator = Tessellator.getInstance();
 		tessellator.getBuffer().begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX);
@@ -116,5 +124,29 @@ public class TileRenderCrystalAltar extends TileEntitySpecialRenderer<TileCrysta
 		tessellator.getBuffer().pos(22, 0, 0).tex(par3Icon.getMaxU(), par3Icon.getMinV()).endVertex();
 		tessellator.getBuffer().pos(0, 0, 0).tex(par3Icon.getMinU(), par3Icon.getMinV()).endVertex();
 		tessellator.draw();
+	}
+
+	public void renderCrystal(TileCrystalAltar te){
+		float maxUpAndDown = 0.15F;
+		float speed = 2;
+		float angle = 0;
+
+		GlStateManager.pushMatrix();
+		GlStateManager.enableBlend();
+		GlStateManager.blendFunc(GL11.GL_ONE, GL11.GL_ONE_MINUS_SRC_COLOR);
+		//Minecraft.getMinecraft().renderEngine.bindTexture(ResourceLocations.TEXTURE_CRYSTAL);
+		GlStateManager.translate(0, 0.4, 0);
+
+		float toDegrees = (float)Math.PI / 180F;
+		angle += speed * te.tickCount;
+		if (angle > 360) angle -= 360;
+
+		GlStateManager.translate(0, maxUpAndDown * Math.sin(angle * toDegrees), 0);
+		GlStateManager.scale(0.2, 0.2, 0.2);
+		GlStateManager.rotate(180F, 1.0F, 0.0F, 0.0F);
+		GlStateManager.rotate(te.tickCount * 6, 0.0F, 1.0F, 0.0F);
+		//MODEL_CRYSTAL.render(null, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0625F);
+		GlStateManager.disableBlend();
+		GlStateManager.popMatrix();
 	}
 }

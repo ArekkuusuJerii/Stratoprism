@@ -53,22 +53,6 @@ public class BlockCrystalAltar extends BlockMod implements ITileEntityProvider {
 		worldIn.removeTileEntity(pos);
 	}
 
-	@Override
-	public void onEntityCollidedWithBlock(World worldIn, BlockPos pos, IBlockState state, Entity entityIn) {
-
-	}
-
-	@Override
-	public void onBlockDestroyedByPlayer(World worldIn, BlockPos pos, IBlockState state) {
-		//TODO: Add FX
-	}
-
-	@Nullable
-	@Override
-	public Item getItemDropped(IBlockState state, Random rand, int fortune) {
-		return super.getItemDropped(state, rand, fortune);
-	}
-
 	@SuppressWarnings("deprecation") //Internal
 	@Override
 	public IBlockState getStateFromMeta(int meta) {

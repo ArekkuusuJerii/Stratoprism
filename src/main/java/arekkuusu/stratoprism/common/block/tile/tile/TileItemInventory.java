@@ -56,6 +56,7 @@ public abstract class TileItemInventory extends TileEntity implements ITileItemH
 	public void onDataPacket(NetworkManager net, SPacketUpdateTileEntity packet) {
 		super.onDataPacket(net, packet);
 		readDataNBT(packet.getNbtCompound()); //FIXME: ClientSide method
+		//readFromNBT(packet.getNbtCompound());
 	}
 
 	public void readDataNBT(NBTTagCompound tagCompound) {
