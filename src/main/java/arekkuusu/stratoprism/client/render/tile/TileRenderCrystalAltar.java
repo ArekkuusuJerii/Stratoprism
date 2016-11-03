@@ -8,6 +8,7 @@
  */
 package arekkuusu.stratoprism.client.render.tile;
 
+import arekkuusu.stratoprism.api.state.enums.CrystalVariant;
 import arekkuusu.stratoprism.client.model.ModelCrystal;
 import arekkuusu.stratoprism.client.proxy.ResourceLocations;
 import arekkuusu.stratoprism.common.block.tile.tile.TileCrystalAltar;
@@ -30,11 +31,12 @@ import java.util.List;
 
 public class TileRenderCrystalAltar extends TileEntitySpecialRenderer<TileCrystalAltar> {
 
-	private static final ModelCrystal MODEL_CRYSTAL = new ModelCrystal();
+	private ModelCrystal MODEL_CRYSTAL;
 
 	@Override
 	public void renderTileEntityAt(TileCrystalAltar te, double x, double y, double z, float partialTicks, int destroyStage) {
 		GlStateManager.pushMatrix();
+		GlStateManager.disableLighting();
 		GlStateManager.enableRescaleNormal();
 		GlStateManager.translate(x + 0.5F, y + 0.78, z + 0.5);
 
@@ -111,6 +113,7 @@ public class TileRenderCrystalAltar extends TileEntitySpecialRenderer<TileCrysta
 			GlStateManager.enableAlpha();
 			GlStateManager.disableBlend();
 		}
+		GlStateManager.enableLighting();
 		GlStateManager.popMatrix();
 	}
 
@@ -126,26 +129,28 @@ public class TileRenderCrystalAltar extends TileEntitySpecialRenderer<TileCrysta
 		tessellator.draw();
 	}
 
-	public void renderCrystal(TileCrystalAltar te){
-		float maxUpAndDown = 0.15F;
+	public void renderCrystal(TileCrystalAltar te) {
+		if (MODEL_CRYSTAL == null)
+			MODEL_CRYSTAL = new ModelCrystal();
+
+		float maxUpAndDown = 0.10F;
 		float speed = 2;
 		float angle = 0;
 
 		GlStateManager.pushMatrix();
 		GlStateManager.enableBlend();
 		GlStateManager.blendFunc(GL11.GL_ONE, GL11.GL_ONE_MINUS_SRC_COLOR);
-		//Minecraft.getMinecraft().renderEngine.bindTexture(ResourceLocations.TEXTURE_CRYSTAL);
-		GlStateManager.translate(0, 0.4, 0);
+		Minecraft.getMinecraft().renderEngine.bindTexture(ResourceLocations.TEXTURE_CRYSTAL);
+		GlStateManager.translate(0, 0.25, 0);
 
-		float toDegrees = (float)Math.PI / 180F;
+		float toDegrees = (float) Math.PI / 180F;
 		angle += speed * te.tickCount;
 		if (angle > 360) angle -= 360;
 
 		GlStateManager.translate(0, maxUpAndDown * Math.sin(angle * toDegrees), 0);
 		GlStateManager.scale(0.2, 0.2, 0.2);
-		GlStateManager.rotate(180F, 1.0F, 0.0F, 0.0F);
 		GlStateManager.rotate(te.tickCount * 6, 0.0F, 1.0F, 0.0F);
-		//MODEL_CRYSTAL.render(null, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0625F);
+		MODEL_CRYSTAL.renderCrystal(CrystalVariant.CRYSTAL);
 		GlStateManager.disableBlend();
 		GlStateManager.popMatrix();
 	}

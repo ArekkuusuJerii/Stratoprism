@@ -11,7 +11,7 @@ package arekkuusu.stratoprism.common.block.tile.tile;
 import arekkuusu.stratoprism.api.StratoprismAPI;
 import arekkuusu.stratoprism.api.item.IPrismaticable;
 import arekkuusu.stratoprism.api.recipe.IRecipePrism;
-import arekkuusu.stratoprism.common.proxy.PacketDispatcher;
+import arekkuusu.stratoprism.common.net.PacketHandler;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Items;
@@ -63,7 +63,7 @@ public class TileCrystalAltar extends TileItemInventory implements ITickable {
 
 						worldObj.playSound(null, pos, SoundEvents.ENTITY_GENERIC_SPLASH, SoundCategory.BLOCKS, 0.1F, 8F);
 
-						PacketDispatcher.sendTileUpdateNearbyPlayers(this);
+						PacketHandler.sendTileUpdateNearbyPlayers(this);
 						break;
 					}
 			}
@@ -122,7 +122,7 @@ public class TileCrystalAltar extends TileItemInventory implements ITickable {
 
 				removed = true;
 				worldObj.playSound(null, pos, SoundEvents.ENTITY_ITEMFRAME_REMOVE_ITEM, SoundCategory.BLOCKS, 0.1F, 10F);
-				PacketDispatcher.sendTileUpdateNearbyPlayers(this);
+				PacketHandler.sendTileUpdateNearbyPlayers(this);
 				break;
 			}
 
@@ -197,7 +197,7 @@ public class TileCrystalAltar extends TileItemInventory implements ITickable {
 
 	public void setWater(boolean water) {
 		hasWater = water;
-		PacketDispatcher.dispatchToNearbyPlayers(worldObj, pos);
+		PacketHandler.updateToNearbyPlayers(worldObj, pos);
 	}
 
 	public boolean hasWater() {

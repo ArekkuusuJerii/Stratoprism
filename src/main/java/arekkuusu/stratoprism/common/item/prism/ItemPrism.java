@@ -9,8 +9,10 @@ import arekkuusu.stratoprism.common.item.ModItems;
 import arekkuusu.stratoprism.common.lib.LibNameItem;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.SoundEvents;
+import net.minecraft.item.EnumAction;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -54,11 +56,21 @@ public class ItemPrism extends ItemMod {
 
 	@Override
 	public ActionResult<ItemStack> onItemRightClick(ItemStack itemStackIn, World worldIn, EntityPlayer playerIn, EnumHand hand) {
-		IVastatioCapability capability = itemStackIn.getCapability(VASTATIO_CAPABILITY, null);
-
-		capability.setVastatio(playerIn, capability.getVastatio() - 10F);
-
+		playerIn.setActiveHand(hand);
 		return new ActionResult<>(EnumActionResult.SUCCESS, itemStackIn);
+	}
+
+	@Override
+	public void onUsingTick(ItemStack stack, EntityLivingBase player, int count) {
+		//TODO: Add FX
+	}
+
+	@Override
+	public void onPlayerStoppedUsing(ItemStack stack, World worldIn, EntityLivingBase entityLiving, int timeLeft) {
+		if(entityLiving instanceof EntityPlayer) {
+			IVastatioCapability capability = stack.getCapability(VASTATIO_CAPABILITY, null);
+			capability.setVastatio(((EntityPlayer)entityLiving), stack, capability.getVastatio() - 10F);
+		}
 	}
 
 	@SuppressWarnings("ConstantConditions")
@@ -72,7 +84,6 @@ public class ItemPrism extends ItemMod {
 				for (int i = 0; i < inventory.getSlots(); i++)
 					if (inventory.getStackInSlot(i) == stack) {
 						inventory.extractItem(i, 1, false);
-						//FIXME: This triggers a null pointer exception in MessageVastatioUpdate$CapsMessageHandler
 						worldIn.playSound(player, entityIn.getPosition(), SoundEvents.BLOCK_GLASS_BREAK, SoundCategory.PLAYERS, 1.0F, 10F);
 						inventory.insertItem(i, new ItemStack(ModItems.BROKEN_PRISM), false);
 					}
@@ -104,8 +115,18 @@ public class ItemPrism extends ItemMod {
 	@Override
 	public ICapabilityProvider initCapabilities(ItemStack stack, NBTTagCompound nbt) {
 		DefaultVastatioCapability capability = new DefaultVastatioCapability();
-		capability.vastatio = 1000;
+		capability.setVastatio(1000);
 		return new VastatioProvider(capability);
+	}
+
+	@Override
+	public EnumAction getItemUseAction(ItemStack stack) {
+		return EnumAction.BLOCK;
+	}
+
+	@Override
+	public int getMaxItemUseDuration(ItemStack stack) {
+		return 5000;
 	}
 
 	@SideOnly(Side.CLIENT)

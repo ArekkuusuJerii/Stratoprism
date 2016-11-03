@@ -6,7 +6,7 @@ import net.minecraft.util.IStringSerializable;
 import java.util.Locale;
 
 public enum CrystalVariant implements IStringSerializable{
-	ALTAR,
+	CRYSTAL,
 	VASTATIO;
 
 	@Override

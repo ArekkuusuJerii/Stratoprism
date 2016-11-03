@@ -9,7 +9,9 @@
 package arekkuusu.stratoprism.client.model;
 
 import arekkuusu.stratoprism.api.state.enums.CrystalVariant;
-import com.google.common.collect.ImmutableMap;
+import arekkuusu.stratoprism.client.proxy.ResourceLocations;
+import com.google.common.base.Optional;
+import com.google.common.collect.UnmodifiableIterator;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.VertexBuffer;
 import net.minecraft.client.renderer.block.model.BakedQuad;
@@ -18,52 +20,75 @@ import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.client.renderer.vertex.VertexFormat;
 import net.minecraft.crash.CrashReport;
 import net.minecraft.util.ReportedException;
-import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.model.Attributes;
 import net.minecraftforge.client.model.IModel;
+import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.client.model.obj.OBJLoader;
-import net.minecraftforge.client.model.obj.OBJModel;
 import net.minecraftforge.client.model.pipeline.LightUtil;
+import net.minecraftforge.common.model.IModelState;
+import net.minecraftforge.common.model.Models;
+import net.minecraftforge.common.model.TRSRTransformation;
 import org.lwjgl.opengl.GL11;
+
+import java.util.List;
 
 public class ModelCrystal {
 
-	private IBakedModel crystalAltar;
-	private IBakedModel vastatioAltar;
+	private IBakedModel crystal;
+	private IBakedModel vastatio;
 
-	public  ModelCrystal(){
-		try{
+	public ModelCrystal() {
+		try {
+			/*
+			 * Model crystal
+			 */
+			IModel crystal = OBJLoader.INSTANCE.loadModel(ResourceLocations.MODEL_CRYSTAL); //.obj Location
 
-			//TODO: Finish this thing
-			OBJModel model = (OBJModel)OBJLoader.INSTANCE.loadModel(new ResourceLocation("stratoprism:models/block/crystal.obj"));
+			VertexFormat format = Attributes.DEFAULT_BAKED_FORMAT; //Some Format
 
-			IModel craftingModel = ((OBJModel)model.retexture(ImmutableMap.of("#crystal", "stratoprism:model/crystal"))).process(ImmutableMap.of("flip-v", "true"));
-
-			VertexFormat format = Attributes.DEFAULT_BAKED_FORMAT;
-
-		} catch(Exception e) {
+			this.crystal = crystal.bake(TRSRTransformation.identity(), format, ModelLoader.defaultTextureGetter()); //Actual model to use
+			/*
+			 * Model vastatioAltar
+			 */
+		} catch (Exception e) {
 			throw new ReportedException(new CrashReport("Error making crystal submodels!", e));
 		}
 	}
 
 	public void renderCrystal(CrystalVariant variant) {
 		switch (variant) {
-			case ALTAR:
-				renderModel(crystalAltar);
+			case CRYSTAL:
+				renderModel(crystal);
 				break;
 			case VASTATIO:
-				renderModel(vastatioAltar);
+				renderModel(vastatio);
 				break;
 		}
 	}
 
 	private void renderModel(IBakedModel model) {
 		Tessellator tessellator = Tessellator.getInstance();
-		VertexBuffer worldrenderer = tessellator.getBuffer();
-		worldrenderer.begin(GL11.GL_QUADS, DefaultVertexFormats.ITEM);
+		VertexBuffer vertexBuffer = tessellator.getBuffer();
+		vertexBuffer.begin(GL11.GL_POLYGON, DefaultVertexFormats.ITEM);
 
-		for(BakedQuad bakedquad : model.getQuads(null, null, 0))
-			LightUtil.renderQuadColor(worldrenderer, bakedquad, -1);
+		for (BakedQuad bakedquad : model.getQuads(null, null, 0))
+			LightUtil.renderQuadColor(vertexBuffer, bakedquad, -1);
+
 		tessellator.draw();
+	}
+
+	private IModelState hideGroups(List<String> groups) {
+		return iModelState -> {
+			if (iModelState.isPresent()) {
+				UnmodifiableIterator<String> parts = Models.getParts(iModelState.get());
+				if (parts.hasNext()) {
+					String name = parts.next();
+					if (!parts.hasNext() && groups.contains(name)) {
+						return Optional.of(TRSRTransformation.identity());
+					}
+				}
+			}
+			return Optional.absent();
+		};
 	}
 }

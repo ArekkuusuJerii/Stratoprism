@@ -11,10 +11,13 @@ package arekkuusu.stratoprism.client.proxy;
 import arekkuusu.stratoprism.api.item.IModelRegister;
 import arekkuusu.stratoprism.client.render.tile.TileRenderCrystalAltar;
 import arekkuusu.stratoprism.common.block.tile.tile.TileCrystalAltar;
+import arekkuusu.stratoprism.common.lib.LibMod;
 import arekkuusu.stratoprism.common.proxy.CommonProxy;
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraftforge.client.event.ModelRegistryEvent;
+import net.minecraftforge.client.model.b3d.B3DLoader;
+import net.minecraftforge.client.model.obj.OBJLoader;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
@@ -28,6 +31,7 @@ public class ClientProxy extends CommonProxy {
 	@Override
 	public void preInit(FMLPreInitializationEvent event) {
 		super.preInit(event);
+		OBJLoader.INSTANCE.addDomain(LibMod.MOD_ID);
 		initRenderers();
 	}
 
@@ -38,13 +42,13 @@ public class ClientProxy extends CommonProxy {
 
 	@SubscribeEvent
 	public static void registerItemModels(ModelRegistryEvent event) {
-		for(Block block : Block.REGISTRY) {
-			if(block instanceof IModelRegister)
+		for (Block block : Block.REGISTRY) {
+			if (block instanceof IModelRegister)
 				((IModelRegister) block).registerModels();
 		}
 
-		for(Item item : Item.REGISTRY) {
-			if(item instanceof IModelRegister)
+		for (Item item : Item.REGISTRY) {
+			if (item instanceof IModelRegister)
 				((IModelRegister) item).registerModels();
 		}
 	}

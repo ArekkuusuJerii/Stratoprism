@@ -8,15 +8,99 @@
  */
 package arekkuusu.stratoprism.api.item.capability;
 
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.World;
 
 public interface IVastatioCapability {
 	float getVastatio();
+
 	float getMaxVastatio();
-	void setVastatio(EntityPlayer stack, float vastatio);
+
+	/**
+	 * Do NOT use unless you want to give an initial amount.
+	 *
+	 * @param vastatio Initial amount, must be more than 0 and less than Max
+	 */
+	void setVastatio(float vastatio);
+
+	/**
+	 * For use with Players and players only
+	 *
+	 * @param player   Player
+	 * @param item     ItemStack modified
+	 * @param vastatio Amount
+	 */
+	void setVastatio(EntityPlayer player, ItemStack item, float vastatio);
+
+	/**
+	 * For use with Entities
+	 *
+	 * @param entity   Entity
+	 * @param item     ItemStack modified
+	 * @param vastatio Amount
+	 */
+	void setVastatio(Entity entity, ItemStack item, float vastatio);
+
+	/**
+	 * For use with TileEntities
+	 *
+	 * @param tileEntity TileEntity
+	 * @param item       ItemStack modified
+	 * @param vastatio   Amount
+	 */
+	void setVastatio(TileEntity tileEntity, ItemStack item, float vastatio);
+
+	/**
+	 * General use
+	 *
+	 * @param world World
+	 * @param pos Pos in the world
+	 * @param item ItemStack modified
+	 * @param vastatio Amount
+	 */
+	void setVastatio(World world, BlockPos pos, ItemStack item, float vastatio);
+
 	void setMaxVastatio(float maxVastatio);
+
 	NBTTagCompound saveNBTData();
+
 	void loadNBTData(NBTTagCompound compound);
-	void dataChanged(EntityPlayer stack);
+
+	/**
+	 * For use with Players and players only
+	 *
+	 * @param player Player
+	 * @param item   ItemStack modified
+	 */
+	void dataChanged(EntityPlayer player, ItemStack item);
+
+	/**
+	 * For use with Entities, this will send updates to all Players around it
+	 *
+	 * @param entity The Entity
+	 * @param item   ItemStack modified
+	 */
+	void dataChanged(Entity entity, ItemStack item);
+
+	/**
+	 * For use with TileEntities, this will send updates to all Players around it
+	 *
+	 * @param tileEntity The TileEntity
+	 * @param item       ItemStack modified
+	 */
+	void dataChanged(TileEntity tileEntity, ItemStack item);
+
+	/**
+	 * For use with whatever idfc, this will send updates to all nearby Players
+	 *
+	 * @param world The World
+	 * @param item  ItemStack modified
+	 * @param pos   Position to check for players
+	 */
+	void dataChanged(World world, BlockPos pos, ItemStack item);
 }
