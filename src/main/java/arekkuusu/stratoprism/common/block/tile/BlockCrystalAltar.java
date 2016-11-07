@@ -9,29 +9,25 @@ import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.PropertyDirection;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.Explosion;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.Nullable;
-import java.util.Random;
 
 public class BlockCrystalAltar extends BlockMod implements ITileEntityProvider {
 
-	public static final PropertyDirection PROPERTYFACING = PropertyDirection.create("facing", EnumFacing.Plane.HORIZONTAL);
-	private static final AxisAlignedBB AABB = new AxisAlignedBB(0.0D, 0.0D, 0.0D, 1.0D, 0.50D, 1.0D);
+	public static final PropertyDirection PROPERTY_FACING = PropertyDirection.create("facing", EnumFacing.Plane.HORIZONTAL);
+	private static final AxisAlignedBB AABB = new AxisAlignedBB(0.0D, 0.0D, 0.0D, 1.0D, 0.8D, 1.0D);
 
 	public BlockCrystalAltar() {
 		super(LibNameBlock.CRYSTAL_ALTAR, Material.ROCK);
@@ -53,22 +49,22 @@ public class BlockCrystalAltar extends BlockMod implements ITileEntityProvider {
 		worldIn.removeTileEntity(pos);
 	}
 
-	@SuppressWarnings("deprecation") //Internal
+	@SuppressWarnings("deprecation")
 	@Override
 	public IBlockState getStateFromMeta(int meta) {
 		EnumFacing facing = EnumFacing.getHorizontal(meta);
-		return getDefaultState().withProperty(PROPERTYFACING, facing);
+		return getDefaultState().withProperty(PROPERTY_FACING, facing);
 	}
 
 	@Override
 	public int getMetaFromState(IBlockState state) {
-		EnumFacing facing = state.getValue(PROPERTYFACING);
+		EnumFacing facing = state.getValue(PROPERTY_FACING);
 		return facing.getHorizontalIndex();
 	}
 
 	@Override
 	protected BlockStateContainer createBlockState() {
-		return new BlockStateContainer(this, PROPERTYFACING);
+		return new BlockStateContainer(this, PROPERTY_FACING);
 	}
 
 	@SuppressWarnings("deprecation")
@@ -76,7 +72,7 @@ public class BlockCrystalAltar extends BlockMod implements ITileEntityProvider {
 	public IBlockState onBlockPlaced(World world, BlockPos pos, EnumFacing facing, float hitX, float hitY, float hitZ, int meta,
 									 EntityLivingBase placer) {
 		EnumFacing enumfacing = EnumFacing.fromAngle(placer.rotationYaw);
-		return this.getDefaultState().withProperty(PROPERTYFACING, enumfacing);
+		return this.getDefaultState().withProperty(PROPERTY_FACING, enumfacing);
 	}
 
 	@SuppressWarnings("deprecation")

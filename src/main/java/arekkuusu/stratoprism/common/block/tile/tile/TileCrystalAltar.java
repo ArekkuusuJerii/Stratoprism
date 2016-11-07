@@ -11,6 +11,8 @@ package arekkuusu.stratoprism.common.block.tile.tile;
 import arekkuusu.stratoprism.api.StratoprismAPI;
 import arekkuusu.stratoprism.api.item.IPrismaticable;
 import arekkuusu.stratoprism.api.recipe.IRecipePrism;
+import arekkuusu.stratoprism.api.state.enums.ParticleFX;
+import arekkuusu.stratoprism.common.Stratoprism;
 import arekkuusu.stratoprism.common.net.PacketHandler;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
@@ -28,6 +30,8 @@ import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.items.ItemHandlerHelper;
 
 import javax.annotation.Nullable;
@@ -152,10 +156,9 @@ public class TileCrystalAltar extends TileItemInventory implements ITickable {
 					EntityItem outputItem = new EntityItem(worldObj, pos.getX() + 0.5, pos.getY() + 1.5, pos.getZ() + 0.5, output);
 					worldObj.spawnEntityInWorld(outputItem);
 
-					fancyCrafting();
-
 					worldObj.updateComparatorOutputLevel(pos, worldObj.getBlockState(pos).getBlock());
 				}
+				fancyCrafting();
 				setWater(false);
 				return true;
 			}
@@ -164,8 +167,17 @@ public class TileCrystalAltar extends TileItemInventory implements ITickable {
 		return false;
 	}
 
+	@SideOnly(Side.CLIENT)
 	private void fancyCrafting() {
-		//TODO: Add FX
+		worldObj.playSound(null, pos, SoundEvents.ENTITY_FIREWORK_TWINKLE, SoundCategory.BLOCKS, 1F, 5F); //TODO: Add own Sounds
+		for (int i = 0; i < 10; i++) {
+			BlockPos pos = getPos();
+			Random rand = new Random();
+			float d3 = (pos.getX()+ rand.nextFloat());
+			float d4 = (float)(pos.getY() + 0.4);
+			float d5 = (pos.getZ() + rand.nextFloat());
+			Stratoprism.proxy.sparkleFX(ParticleFX.GAS_ROUND, d3, d4, d5, 0F, rand.nextFloat() * 0.2, 0F, 10);
+		}
 	}
 
 	@Override
@@ -206,7 +218,7 @@ public class TileCrystalAltar extends TileItemInventory implements ITickable {
 
 	@Override
 	public void update() {
-		List<EntityItem> entityItemList = worldObj.getEntitiesWithinAABB(EntityItem.class, new AxisAlignedBB(getPos()).expand(0, -0.4, 0));
+		List<EntityItem> entityItemList = worldObj.getEntitiesWithinAABB(EntityItem.class, new AxisAlignedBB(getPos()));
 		if (!entityItemList.isEmpty()) {
 			entityItemList.forEach(this::collideItem);
 		}

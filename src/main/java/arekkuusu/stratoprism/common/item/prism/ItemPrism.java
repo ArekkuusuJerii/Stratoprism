@@ -4,6 +4,7 @@ import arekkuusu.stratoprism.api.item.capability.DefaultVastatioCapability;
 import arekkuusu.stratoprism.api.item.capability.IVastatioCapability;
 import arekkuusu.stratoprism.api.item.capability.VastatioProvider;
 import arekkuusu.stratoprism.client.proxy.ModelHandler;
+import arekkuusu.stratoprism.common.Stratoprism;
 import arekkuusu.stratoprism.common.item.ItemMod;
 import arekkuusu.stratoprism.common.item.ModItems;
 import arekkuusu.stratoprism.common.lib.LibNameItem;
@@ -30,6 +31,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.items.IItemHandler;
 
 import java.util.List;
+import java.util.Random;
 
 public class ItemPrism extends ItemMod {
 
@@ -49,28 +51,9 @@ public class ItemPrism extends ItemMod {
 		tooltip.add(TextFormatting.ITALIC + I18n.format("stratoprism.tooltip.prism.use.name"));
 		tooltip.add(TextFormatting.BLUE + I18n.format("stratoprism.tooltip.prism.how_to_use.name"));
 		tooltip.add("");
-		tooltip.add(TextFormatting.GOLD + I18n.format("stratoprism.tooltip.prism.uses_remaining.name") + " "
+		tooltip.add(TextFormatting.GOLD + I18n.format("stratoprism.tooltip.prism.vastatio_remaining.name") + " "
 				+ TextFormatting.AQUA + stack.getCapability(VASTATIO_CAPABILITY, null).getVastatio());
 		tooltip.add("");
-	}
-
-	@Override
-	public ActionResult<ItemStack> onItemRightClick(ItemStack itemStackIn, World worldIn, EntityPlayer playerIn, EnumHand hand) {
-		playerIn.setActiveHand(hand);
-		return new ActionResult<>(EnumActionResult.SUCCESS, itemStackIn);
-	}
-
-	@Override
-	public void onUsingTick(ItemStack stack, EntityLivingBase player, int count) {
-		//TODO: Add FX
-	}
-
-	@Override
-	public void onPlayerStoppedUsing(ItemStack stack, World worldIn, EntityLivingBase entityLiving, int timeLeft) {
-		if(entityLiving instanceof EntityPlayer) {
-			IVastatioCapability capability = stack.getCapability(VASTATIO_CAPABILITY, null);
-			capability.setVastatio(((EntityPlayer)entityLiving), stack, capability.getVastatio() - 10F);
-		}
 	}
 
 	@SuppressWarnings("ConstantConditions")
@@ -102,6 +85,11 @@ public class ItemPrism extends ItemMod {
 	}
 
 	@Override
+	public boolean shouldCauseReequipAnimation(ItemStack oldStack, ItemStack newStack, boolean slotChanged) {
+		return false;
+	}
+
+	@Override
 	public boolean showDurabilityBar(ItemStack stack) {
 		return true;
 	}
@@ -126,7 +114,7 @@ public class ItemPrism extends ItemMod {
 
 	@Override
 	public int getMaxItemUseDuration(ItemStack stack) {
-		return 5000;
+		return 10000;
 	}
 
 	@SideOnly(Side.CLIENT)

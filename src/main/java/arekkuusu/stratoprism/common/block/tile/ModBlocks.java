@@ -11,5 +11,7 @@ public class ModBlocks {
 
 	@ObjectHolder(LibNameBlock.CRYSTAL_ALTAR)
 	public static final Block CRYSTAL_ALTAR = new Block(Material.ROCK);
+	@ObjectHolder(LibNameBlock.PRISM_TIER1)
+	public static final Block PRISM = new Block(Material.ROCK);
 
 }

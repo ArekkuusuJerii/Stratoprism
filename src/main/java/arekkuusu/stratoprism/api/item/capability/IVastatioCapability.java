@@ -8,8 +8,11 @@
  */
 package arekkuusu.stratoprism.api.item.capability;
 
+import arekkuusu.stratoprism.common.net.MessageVastatioUpdate;
+import arekkuusu.stratoprism.common.net.PacketHandler;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
@@ -35,7 +38,10 @@ public interface IVastatioCapability {
 	 * @param item     ItemStack modified
 	 * @param vastatio Amount
 	 */
-	void setVastatio(EntityPlayer player, ItemStack item, float vastatio);
+	default void setVastatio(EntityPlayer player, ItemStack item, float vastatio) {
+		setVastatio(vastatio);
+		dataChanged(player, item);
+	}
 
 	/**
 	 * For use with Entities
@@ -44,7 +50,10 @@ public interface IVastatioCapability {
 	 * @param item     ItemStack modified
 	 * @param vastatio Amount
 	 */
-	void setVastatio(Entity entity, ItemStack item, float vastatio);
+	default void setVastatio(Entity entity, ItemStack item, float vastatio) {
+		setVastatio(vastatio);
+		dataChanged(entity, item);
+	}
 
 	/**
 	 * For use with TileEntities
@@ -53,7 +62,10 @@ public interface IVastatioCapability {
 	 * @param item       ItemStack modified
 	 * @param vastatio   Amount
 	 */
-	void setVastatio(TileEntity tileEntity, ItemStack item, float vastatio);
+	default void setVastatio(TileEntity tileEntity, ItemStack item, float vastatio) {
+		setVastatio(vastatio);
+		dataChanged(tileEntity, item);
+	}
 
 	/**
 	 * General use
@@ -63,7 +75,10 @@ public interface IVastatioCapability {
 	 * @param item ItemStack modified
 	 * @param vastatio Amount
 	 */
-	void setVastatio(World world, BlockPos pos, ItemStack item, float vastatio);
+	default void setVastatio(World world, BlockPos pos, ItemStack item, float vastatio) {
+		setVastatio(vastatio);
+		dataChanged(world, pos, item);
+	}
 
 	void setMaxVastatio(float maxVastatio);
 
@@ -77,7 +92,10 @@ public interface IVastatioCapability {
 	 * @param player Player
 	 * @param item   ItemStack modified
 	 */
-	void dataChanged(EntityPlayer player, ItemStack item);
+	default void dataChanged(EntityPlayer player, ItemStack item) {
+		if (player instanceof EntityPlayerMP)
+			PacketHandler.sendTo((EntityPlayerMP)player, new MessageVastatioUpdate(item, saveNBTData()));
+	}
 
 	/**
 	 * For use with Entities, this will send updates to all Players around it
@@ -85,7 +103,9 @@ public interface IVastatioCapability {
 	 * @param entity The Entity
 	 * @param item   ItemStack modified
 	 */
-	void dataChanged(Entity entity, ItemStack item);
+	default void dataChanged(Entity entity, ItemStack item) {
+		PacketHandler.sendToNear(entity, new MessageVastatioUpdate(item, saveNBTData()));
+	}
 
 	/**
 	 * For use with TileEntities, this will send updates to all Players around it
@@ -93,7 +113,9 @@ public interface IVastatioCapability {
 	 * @param tileEntity The TileEntity
 	 * @param item       ItemStack modified
 	 */
-	void dataChanged(TileEntity tileEntity, ItemStack item);
+	default void dataChanged(TileEntity tileEntity, ItemStack item) {
+		PacketHandler.sendToNear(tileEntity.getWorld(), tileEntity.getPos(), new MessageVastatioUpdate(item, saveNBTData()));
+	}
 
 	/**
 	 * For use with whatever idfc, this will send updates to all nearby Players
@@ -102,5 +124,7 @@ public interface IVastatioCapability {
 	 * @param item  ItemStack modified
 	 * @param pos   Position to check for players
 	 */
-	void dataChanged(World world, BlockPos pos, ItemStack item);
+	default void dataChanged(World world, BlockPos pos, ItemStack item) {
+		PacketHandler.sendToNear(world, pos, new MessageVastatioUpdate(item, saveNBTData()));
+	}
 }

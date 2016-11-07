@@ -51,6 +51,7 @@ public class StratoprismCreativeTab extends CreativeTabs {
 	public void displayAllRelevantItems(List<ItemStack> list) {
 		this.list = list;
 		addBlock(ModBlocks.CRYSTAL_ALTAR);
+		addBlock(ModBlocks.PRISM);
 
 		addItem(ModItems.PRISM_SHARD);
 		addItem(ModItems.PRISM);

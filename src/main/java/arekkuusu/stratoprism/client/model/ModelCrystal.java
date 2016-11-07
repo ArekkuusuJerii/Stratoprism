@@ -11,6 +11,7 @@ package arekkuusu.stratoprism.client.model;
 import arekkuusu.stratoprism.api.state.enums.CrystalVariant;
 import arekkuusu.stratoprism.client.proxy.ResourceLocations;
 import com.google.common.base.Optional;
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.UnmodifiableIterator;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.VertexBuffer;
@@ -24,6 +25,7 @@ import net.minecraftforge.client.model.Attributes;
 import net.minecraftforge.client.model.IModel;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.client.model.obj.OBJLoader;
+import net.minecraftforge.client.model.obj.OBJModel;
 import net.minecraftforge.client.model.pipeline.LightUtil;
 import net.minecraftforge.common.model.IModelState;
 import net.minecraftforge.common.model.Models;
@@ -34,22 +36,24 @@ import java.util.List;
 
 public class ModelCrystal {
 
-	private IBakedModel crystal;
-	private IBakedModel vastatio;
+	private IBakedModel crystalRaw;
+	private IBakedModel crystalRefined;
 
-	public ModelCrystal() {
+	public ModelCrystal() {//FIXME: This SHIT doesnt use the whole UV given in the mtl!!!!!!! >:(
 		try {
-			/*
-			 * Model crystal
-			 */
-			IModel crystal = OBJLoader.INSTANCE.loadModel(ResourceLocations.MODEL_CRYSTAL); //.obj Location
-
 			VertexFormat format = Attributes.DEFAULT_BAKED_FORMAT; //Some Format
-
-			this.crystal = crystal.bake(TRSRTransformation.identity(), format, ModelLoader.defaultTextureGetter()); //Actual model to use
 			/*
-			 * Model vastatioAltar
+			 * Model crystalRaw
 			 */
+			IModel crystal = OBJLoader.INSTANCE.loadModel(ResourceLocations.MODEL_CRYSTAL_RAW);
+
+			this.crystalRaw = crystal.bake(TRSRTransformation.identity(), format, ModelLoader.defaultTextureGetter()); //Actual model to use
+			/*
+			 * Model crystalRefined
+			 */
+			crystal = OBJLoader.INSTANCE.loadModel(ResourceLocations.MODEL_CRYSTAL_REFINED);
+
+			this.crystalRefined = crystal.bake(TRSRTransformation.identity(), format, ModelLoader.defaultTextureGetter()); //Actual model to use
 		} catch (Exception e) {
 			throw new ReportedException(new CrashReport("Error making crystal submodels!", e));
 		}
@@ -57,23 +61,22 @@ public class ModelCrystal {
 
 	public void renderCrystal(CrystalVariant variant) {
 		switch (variant) {
-			case CRYSTAL:
-				renderModel(crystal);
+			case CRYSTAL_RAW:
+				renderModel(crystalRaw);
 				break;
-			case VASTATIO:
-				renderModel(vastatio);
+			case CRYSTAL_REFINED:
+				renderModel(crystalRefined);
 				break;
 		}
 	}
 
 	private void renderModel(IBakedModel model) {
 		Tessellator tessellator = Tessellator.getInstance();
-		VertexBuffer vertexBuffer = tessellator.getBuffer();
-		vertexBuffer.begin(GL11.GL_POLYGON, DefaultVertexFormats.ITEM);
+		VertexBuffer worldrenderer = tessellator.getBuffer();
+		worldrenderer.begin(GL11.GL_QUADS, DefaultVertexFormats.ITEM);
 
-		for (BakedQuad bakedquad : model.getQuads(null, null, 0))
-			LightUtil.renderQuadColor(vertexBuffer, bakedquad, -1);
-
+		for(BakedQuad bakedquad : model.getQuads(null, null, 0))
+			LightUtil.renderQuadColor(worldrenderer, bakedquad, -1);
 		tessellator.draw();
 	}
 

@@ -2,6 +2,7 @@ package arekkuusu.stratoprism.common;
 
 import arekkuusu.stratoprism.common.proxy.CommonProxy;
 import arekkuusu.stratoprism.common.lib.LibMod;
+import arekkuusu.stratoprism.common.proxy.ISidedProxy;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.minecraftforge.fml.common.Mod.Instance;
@@ -18,7 +19,7 @@ public class Stratoprism {
 	public static Stratoprism instance;
 
 	@SidedProxy(serverSide = LibMod.PROXY_COMMON, clientSide = LibMod.PROXY_CLIENT)
-	public static CommonProxy proxy;
+	public static ISidedProxy proxy;
 
 	@EventHandler
 	public void preInit(FMLPreInitializationEvent event){

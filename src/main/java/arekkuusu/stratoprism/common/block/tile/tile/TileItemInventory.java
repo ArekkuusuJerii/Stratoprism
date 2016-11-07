@@ -21,11 +21,10 @@ public abstract class TileItemInventory extends TileEntity implements ITileItemH
 	public ItemStackHandlerTile itemHandler = createItemHandler();
 
 	@Override
-	public boolean shouldRefresh(World world, BlockPos pos, @Nonnull IBlockState oldState, @Nonnull IBlockState newState) {
+	public boolean shouldRefresh(World world, BlockPos pos, IBlockState oldState, IBlockState newState) {
 		return oldState.getBlock() != newState.getBlock();
 	}
 
-	@Nonnull
 	@Override
 	public NBTTagCompound writeToNBT(NBTTagCompound nbtTagCompound) {
 		NBTTagCompound ret = super.writeToNBT(nbtTagCompound);
@@ -39,7 +38,6 @@ public abstract class TileItemInventory extends TileEntity implements ITileItemH
 		readDataNBT(nbtTagCompound);
 	}
 
-	@Nonnull
 	@Override
 	public final NBTTagCompound getUpdateTag() {
 		return writeToNBT(new NBTTagCompound());
@@ -59,13 +57,13 @@ public abstract class TileItemInventory extends TileEntity implements ITileItemH
 		//readFromNBT(packet.getNbtCompound());
 	}
 
+	public void writeDataNBT(NBTTagCompound nbtTagCompound) {
+		nbtTagCompound.merge(itemHandler.serializeNBT());
+	}
+
 	public void readDataNBT(NBTTagCompound tagCompound) {
 		itemHandler = createItemHandler();
 		itemHandler.deserializeNBT(tagCompound);
-	}
-
-	public void writeDataNBT(NBTTagCompound nbtTagCompound) {
-		nbtTagCompound.merge(itemHandler.serializeNBT());
 	}
 
 	protected ItemStackHandlerTile createItemHandler() {
@@ -73,13 +71,12 @@ public abstract class TileItemInventory extends TileEntity implements ITileItemH
 	}
 
 	@Override
-	public boolean hasCapability(@Nonnull Capability<?> cap, @Nonnull EnumFacing side) {
+	public boolean hasCapability( Capability<?> cap, EnumFacing side) {
 		return cap == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY || super.hasCapability(cap, side);
 	}
 
-	@Nonnull
 	@Override
-	public <T> T getCapability(@Nonnull Capability<T> capability, @Nonnull EnumFacing side) {
+	public <T> T getCapability(Capability<T> capability, EnumFacing side) {
 		if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY)
 			return CapabilityItemHandler.ITEM_HANDLER_CAPABILITY.cast(itemHandler);
 		return super.getCapability(capability, side);

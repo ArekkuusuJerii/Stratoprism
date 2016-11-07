@@ -26,5 +26,5 @@ stratoprism.tooltip.prism_shard.header.name=Shard from a shiny crystal
 
 stratoprism.tooltip.prism.header.name=Vastatio container
 stratoprism.tooltip.prism.use.name=Use:
-stratoprism.tooltip.prism.how_to_use.name=Right click to release energy
-stratoprism.tooltip.prism.uses_remaining.name=Uses remaining:
+stratoprism.tooltip.prism.how_to_use.name=Right click a block
+stratoprism.tooltip.prism.vastatio_remaining.name=Vastatio remaining:

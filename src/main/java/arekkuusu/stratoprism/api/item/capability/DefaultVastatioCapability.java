@@ -48,30 +48,6 @@ public class DefaultVastatioCapability implements IVastatioCapability {
 	}
 
 	@Override
-	public void setVastatio(EntityPlayer player, ItemStack item, float vastatio) {
-		setVastatio(vastatio);
-		dataChanged(player, item);
-	}
-
-	@Override
-	public void setVastatio(Entity entity, ItemStack item, float vastatio) {
-		setVastatio(vastatio);
-		dataChanged(entity, item);
-	}
-
-	@Override
-	public void setVastatio(TileEntity tileEntity, ItemStack item, float vastatio) {
-		setVastatio(vastatio);
-		dataChanged(tileEntity, item);
-	}
-
-	@Override
-	public void setVastatio(World world, BlockPos pos, ItemStack item, float vastatio) {
-		setVastatio(vastatio);
-		dataChanged(world, pos, item);
-	}
-
-	@Override
 	public void setMaxVastatio(float maxVastatio) {
 		this.maxVastatio = maxVastatio;
 	}
@@ -84,24 +60,5 @@ public class DefaultVastatioCapability implements IVastatioCapability {
 	@Override
 	public void loadNBTData(NBTTagCompound compound) {
 		VastatioCapabilityStorage.cap.readNBT(VastatioProvider.VASTATIO_CAPABILITY, this, null, compound);
-	}
-
-	@Override
-	public void dataChanged(EntityPlayer player, ItemStack item) {
-		if (player instanceof EntityPlayerMP)
-			PacketHandler.sendTo((EntityPlayerMP)player, new MessageVastatioUpdate(item, saveNBTData()));
-	}
-
-	public void dataChanged(Entity entity, ItemStack item) {
-		PacketHandler.sendToNear(entity, new MessageVastatioUpdate(item, saveNBTData()));
-	}
-
-	public void dataChanged(TileEntity tileEntity, ItemStack item) {
-		PacketHandler.sendToNear(tileEntity.getWorld(), tileEntity.getPos(), new MessageVastatioUpdate(item, saveNBTData()));
-	}
-
-	@Override
-	public void dataChanged(World world, BlockPos pos, ItemStack item) {
-		PacketHandler.sendToNear(world, pos, new MessageVastatioUpdate(item, saveNBTData()));
 	}
 }
